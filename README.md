@@ -4,7 +4,7 @@ This repository accompanies a **Google Colab notebook** that solves the fundame
 
 Below you will find:
 
-* **The exact equations** (rendered via GitHub’s built‑in \`\`\`math fences).
+* **The exact equations** .
 * **How to run the notebook in Colab.**
 
 ---
