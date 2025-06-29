@@ -109,7 +109,5 @@ so you can spot potential avalanche zones.
    * **Temperature** – SRH sign reversal as n<sub>i</sub> rises.
    * **Length L** – observe short‑channel electrostatics.
 
-If Colab prompts *“Restart runtime after pip install”* accept, then click **Run all** again.
 
-Enjoy experimenting, and file an issue if you hit a snag!
 
