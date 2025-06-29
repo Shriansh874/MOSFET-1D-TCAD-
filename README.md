@@ -4,7 +4,7 @@ A **Google Colab notebook** that lets you explore MOSFET device physics by solv
 
 This README involves:
 
-* **Equations which are in the solver** (rendered in GitHub‑friendly \`math\` blocks).
+* **Equations which are in the solver**.
 * **How to run the notebook in Colab**.
 
 ---
