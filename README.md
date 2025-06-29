@@ -2,7 +2,7 @@
 
 This repository accompanies a **Google Colab notebook** that solves the fundamental 1‑D MOSFET equations and lets you explore their behaviour with IPyWidgets sliders.
 
-Below you’ll find only what matters:
+Below you will find:
 
 * **The exact equations** (rendered via GitHub’s built‑in \`\`\`math fences).
 * **How to run the notebook in Colab.**
