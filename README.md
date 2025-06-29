@@ -1,61 +1,109 @@
-# 1‑D MOSFET Simulator — Physics & Colab
+# 1‑D MOSFET Simulator — Physics & Colab
 
-This repo accompanies a **Google Colab notebook** that numerically solves the fundamental 1‑D MOSFET equations and lets you explore them with IPyWidgets sliders.
+This repository accompanies a **Google Colab notebook** that solves the fundamental 1‑D MOSFET equations and lets you explore their behaviour with IPyWidgets sliders.
 
-*Section 1* lists the exact physics implemented (plain Markdown & images).  
-*Section 2* shows how to run the notebook in Colab.
+Below you’ll find only what matters:
+
+* **The exact equations** (rendered via GitHub’s built‑in \`\`\`math fences).
+* **How to run the notebook in Colab.**
 
 ---
 
-## 1 Equations Implemented 🧮
+## 1 Equations Implemented 🧮
 
-*(all variables in cgs units; default T = 300 K)*
+*(cgs units; default T = 300 K)*
 
 ### 1.1 Poisson (electrostatics)
 
-<img src="https://latex.codecogs.com/svg.latex?\frac{d}{dx}\Bigl(\varepsilon\,\frac{d\varphi}{dx}\Bigr)%20=%20-q\,(p-n+N_D%5E%2B%20-%20N_A%5E%2D)" alt="Poisson equation" />
+```math
+\frac{d}{dx}\left(\varepsilon\,\frac{d\varphi}{dx}\right) 
+  = -q\,(p - n + N_D^{+} - N_A^{-})
+```
 
-Dirichlet contacts: φ = 0 V at ohmic source & drain.  
-Gate bias V<sub>g</sub> is applied as a uniform shift Δφ = V<sub>g</sub> inside the channel region.
+*Ohmic contacts:* φ = 0 V at source & drain.
+*Gate bias:* adds a uniform shift Δφ = V<sub>g</sub> inside the channel region (oxide omitted for brevity).
 
-### 1.2 Carrier statistics (equilibrium)
+### 1.2 Carrier statistics (equilibrium Boltzmann)
 
-<img src="https://latex.codecogs.com/svg.latex?n%20=%20n_i%20e^{\frac{q\varphi}{kT}},\quad%20p%20=%20n_i%20e^{-\frac{q\varphi}{kT}}" alt="Carrier statistics" />
+```math
+n = n_i \exp\!\left(\frac{q\varphi}{kT}\right),
+\qquad
+p = n_i \exp\!\left(-\frac{q\varphi}{kT}\right)
+```
 
-Evaluated every Newton step so φ and charge remain self‑consistent.
+(Re‑evaluated every Newton iteration).
 
 ### 1.3 Mobility
 
-1. **Concentration dependence (Caughey–Thomas)**  
-   <img src="https://latex.codecogs.com/svg.latex?\mu_{\text{lat}}(N)%20=%20\mu_{\min}%20+%20\frac{\mu_{\max}-\mu_{\min}}{1+\left(\frac{N}{N_{\text{ref}}}\right)^\alpha}" alt="Caughey–Thomas mobility" />
+**Concentration dependence (Caughey–Thomas)**
 
-2. **High‑field velocity saturation (Kroemer)**  
-   <img src="https://latex.codecogs.com/svg.latex?\mu(E)%20=%20\frac{\mu_{\text{lat}}}{1+\mu_{\text{lat}}|E|/v_{\text{sat}}},\quad%20E=-\frac{d\varphi}{dx}" alt="Velocity saturation" />
+```math
+\mu_{lat}(N) = \mu_{\min} 
+ + \frac{\mu_{\max}-\mu_{\min}}{1 + \left( N / N_{\text{ref}} \right)^{\alpha}}
+```
 
-### 1.4 Current densities (drift–diffusion)
+**Velocity saturation (Kroemer)**
 
-<img src="https://latex.codecogs.com/svg.latex?J_n%20=%20q\mu_n\,n\,E%20-%20qD_n\,\frac{dn}{dx},\quad%20J_p%20=%20q\mu_p\,p\,E%20+%20qD_p\,\frac{dp}{dx}" alt="Current densities" />
+```math
+\mu(E) = \frac{\mu_{lat}}{1 + \mu_{lat} |E| / v_{sat}},
+\qquad E = -\frac{d\varphi}{dx}
+```
+
+### 1.4 Current densities (for G–R plots)
+
+```math
+J_n = q\mu_n n E - q D_n \frac{dn}{dx}
+\qquad
+J_p = q\mu_p p E + q D_p \frac{dp}{dx}
+```
 
 ### 1.5 Generation & Recombination
 
-* **Shockley–Read–Hall**  
-  <img src="https://latex.codecogs.com/svg.latex?R_{\text{SRH}}%20=%20\frac{n\,p-n_i^2}{\tau_p(n+n_i)+\tau_n(p+n_i)}" alt="SRH recombination" />
+**Shockley–Read–Hall**
 
-* **Auger**  
-  <img src="https://latex.codecogs.com/svg.latex?R_{\text{Auger}}%20=%20\bigl(C_n\,n%20+%20C_p\,p\bigr)\,(n\,p-n_i^2)" alt="Auger recombination" />
+```math
+R_{\text{SRH}} = \frac{np - n_i^{2}}{\tau_p (n + n_i) + \tau_n (p + n_i)}
+```
 
-* **Impact ionisation (Selberherr)**  
-  <img src="https://latex.codecogs.com/svg.latex?\alpha(E)%20=%20\alpha_0\,\exp\Bigl[-\bigl(E_{\text{crit}}/E\bigr)^\beta\Bigr],\quad%20G_{\text{II}}%20=%20\alpha(E)\,\frac{|J_n|+|J_p|}{q}" alt="Impact ionisation" />
+**Auger**
 
-The GUI plots the magnitude  
-<img src="https://latex.codecogs.com/svg.latex?|G_{\text{II}}-R_{\text{SRH}}-R_{\text{Auger}}|\;(\mathrm{cm}^{-3}\,\mathrm{s}^{-1})" alt="Net G–R rate" />  
-in log‑scale, revealing where avalanche could start.
+```math
+R_{\text{Auger}} = (C_n n + C_p p)\,(np - n_i^{2})
+```
 
-> **Quantum stub** — `quantum.py` can be swapped with a Schrödinger–Poisson routine returning an extra charge term ρ<sub>Q</sub>(φ).
+**Impact ionisation (Selberherr)**
+
+```math
+\alpha(E) = \alpha_0 \exp\!\Bigl[-(E_{crit}/E)^{\beta}\Bigr]
+\qquad
+G_{\text{II}} = \alpha(E) \frac{|J_n| + |J_p|}{q}
+```
+
+The GUI plots the magnitude `|G_II − R_SRH − R_Auger|` on a log axis, revealing prospective avalanche spots.
+
+> **Quantum stub** – `quantum.py` is a placeholder for Schrödinger–Poisson charge.  Replace it and feed the extra charge into Poisson if you need sub‑10 nm accuracy.
 
 ---
 
-## 2 Run the Notebook in Google Colab 🚀
+## 2 Run in Google Colab 🚀
 
-1. **Open** the notebook (replace `<USER>/<REPO>` with your path):  
+1. **Open** the notebook (swap in your repo path):
 
+   ```text
+   https://colab.research.google.com/github/<USER>/<REPO>/blob/main/MOSFET_1D_GUI.ipynb
+   ```
+2. Click **Runtime ▸ Run all**. The notebook will
+
+   * install `ipywidgets` (first run only),
+   * write each Python module via `%%writefile`,
+   * import `mosfet_gui` → launches the slider panel.
+3. **Play with the sliders**
+
+   * **Gate bias Vg** – φ(x) bends, inversion appears.
+   * **Doping N<sub>A</sub>, N<sub>D</sub>** – mobility drops in heavily doped regions; G–R shifts.
+   * **Temperature** – SRH flips sign as n<sub>i</sub> rises.
+   * **Length L** – shows classic short‑channel electrostatics.
+
+If Colab prompts *“Restart runtime after pip install”* simply accept, then select **Run all** again.
+
+Enjoy exploring MOSFET physics!  Open an issue if you hit a snag or have ideas.
