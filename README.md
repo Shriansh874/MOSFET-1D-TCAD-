@@ -1,24 +1,66 @@
-# 1‑D MOSFET Simulator — Physics ⬄ Colab
+# 1‑D MOSFET Simulator — Physics & Colab
 
-This repository accompanies a **Google Colab notebook** that solves the textbook semiconductor‐device equations for a long‑channel MOSFET slice and visualises the results with IPyWidgets sliders.  
+A **single Google Colab notebook** that solves the key equations of a long‑channel MOSFET slice and lets you explore the results with sliders. 
 
-
+---
 
 ## Governing Equations 
 
-All symbols use cgs units (cm, s, F/cm, …); temperature default = 300 K.
+All variables use cgs units.  Temperature defaults to 300 K.
 
-|  #  |  Equation                                                                                         | Description / Notes                                                                                                                                                                                                                                 |              |                                                                                                                       |       |                                                                                                                            |
-| --- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------- |
-| (1) | $\displaystyle \frac{d}{dx}\bigl(\varepsilon\,\frac{d\varphi}{dx}\bigr) =\;-q\,(p-n+N_D^+-N_A^-)$ | **Poisson** — solved with Newton iteration on a finite‑difference tri‑diagonal matrix.  Dirichlet contacts: φ = 0 V at source & drain; gate bias V<sub>g</sub> enters as a uniform shift Δφ in the channel region (placeholder for an oxide stack). |              |                                                                                                                       |       |                                                                                                                            |
-| (2) | $n = n_i\,e^{\;q\varphi/kT},\;\; p = n_i\,e^{-q\varphi/kT}$                                       | **Equilibrium carrier statistics** — Boltzmann approximation; updated every Newton step so charge and potential remain self‑consistent.                                                                                                             |              |                                                                                                                       |       |                                                                                                                            |
-| (3) | $\displaystyle \mu_{lat}(N)=\mu_{min}+\frac{\mu_{max}-\mu_{min}}{1+(N/N_{ref})^{\alpha}} $        | **Caughey–Thomas lattice mobility** — concentration‑dependent degradation.  Parameters chosen for 300 K silicon (electrons & holes separately).                                                                                                     |              |                                                                                                                       |       |                                                                                                                            |
-| (4) | ( \displaystyle \mu(E)=\frac{\mu\_{lat}}{1+\mu\_{lat}                                             | E                                                                                                                                                                                                                                                   | /v\_{sat}} ) | **Velocity‑saturation field dependence** — Kroemer model captures high‑field roll‑off without hydrodynamic equations. |       |                                                                                                                            |
-| (5) | $R_{\text{SRH}} = \dfrac{np-n_i^2}{\tau_p(n+n_i)+\tau_n(p+n_i)}$                                  | **Shockley–Read–Hall recombination** — single mid‑gap trap, lifetimes τ<sub>n</sub>, τ<sub>p</sub>.                                                                                                                                                 |              |                                                                                                                       |       |                                                                                                                            |
-| (6) | $R_{\text{Auger}} = (C_n n + C_p p)(np-n_i^2)$                                                    | **Auger recombination** — dominates at high injection.                                                                                                                                                                                              |              |                                                                                                                       |       |                                                                                                                            |
-| (7) | $\alpha(E)=\alpha_0 e^{-(E_{crit}/E)^{\beta}}$  →  (G\_{\text{II}}=\alpha(E),\dfrac{              | J\_n                                                                                                                                                                                                                                                | +            | J\_p                                                                                                                  | }{q}) | **Impact ionisation generation** — Selberherr field‑dependent coefficient; visualised to show where avalanche could start. |
+### 1.1 Poisson (Electrostatics)
 
-> *Optional stub:* a placeholder function in `quantum.py` lets you insert Schrödinger–Poisson correction by returning a quantum sheet charge and adding it to the RHS of Eq.(1).
+$$
+\frac{d}{dx}\!\Bigl(\varepsilon\,\frac{d\varphi}{dx}\Bigr)\;=\;-q\,[p\,-\,n\,+\,N_D^{+}\!-\!N_A^{-}]\qquad(1)
+$$
+
+* **Contacts:** Dirichlet φ = 0 V at source & drain.
+* **Gate bias:** a uniform potential shift Δφ = V<sub>g</sub> applied to the channel region (oxide not yet included—simplifies the demo while still revealing inversion physics).
+
+### 1.2 Carrier Statistics (Equilibrium)
+
+$$
+ n = n_i\,e^{\;q\varphi/kT}, \qquad p = n_i\,e^{-q\varphi/kT}\qquad(2)
+$$
+
+Boltzmann approximation; evaluated each Newton iteration so charge and potential remain self‑consistent.
+
+### 1.3 Mobility
+
+1. **Concentration dependence (Caughey–Thomas)**
+
+   $$
+   \mu_{lat}(N)=\mu_{min}+\frac{\mu_{max}-\mu_{min}}{1+(N/N_{ref})^{\alpha}}\qquad(3)
+   $$
+2. **High‑field velocity saturation (Kroemer)**
+
+   $$
+   \mu(E)=\frac{\mu_{lat}}{1+\mu_{lat}|E|/v_{sat}}\qquad(4)
+   $$
+
+The two effects combine to imitate bulk mobility roll‑off and velocity saturation without solving energy‑balance equations.
+
+### 1.4 Generation & Recombination
+
+* **Shockley–Read–Hall**
+
+  $$
+  R_{\mathrm{SRH}}=\frac{np-n_i^2}{\tau_p(n+n_i)+\tau_n(p+n_i)}\qquad(5)
+  $$
+* **Auger**
+
+  $$
+  R_{\mathrm{Auger}}=(C_n n + C_p p)(np-n_i^2)\qquad(6)
+  $$
+* **Impact Ionisation (Selberherr)**
+
+  $$
+  \alpha(E)=\alpha_0 e^{-(E_{crit}/E)^{\beta}},\quad G_{\mathrm{II}}=\alpha(E)\,\frac{|J_n|+|J_p|}{q}\qquad(7)
+  $$
+
+The GUI plots $|G_{\mathrm{II}}-R_{\mathrm{SRH}}-R_{\mathrm{Auger}}|$ so you can see where avalanche might begin.
+
+> **Note:** `quantum.py` is a stub you can replace with a Schrödinger–Poisson charge routine.  Plug its output into Eq‑(1) for sub‑10‑nm channels.
 
 ---
 
