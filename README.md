@@ -9,7 +9,7 @@ Below you’ll find only what matters:
 
 ---
 
-## 1 Equations Implemented 🧮
+## 1 Equations Implemented 
 
 *(cgs units; default T = 300 K)*
 
@@ -85,25 +85,11 @@ The GUI plots the magnitude `|G_II − R_SRH − R_Auger|` on a log axis, 
 
 ---
 
-## 2 Run in Google Colab 🚀
-
-1. **Open** the notebook (swap in your repo path):
-
-   ```text
-   https://colab.research.google.com/github/<USER>/<REPO>/blob/main/MOSFET_1D_GUI.ipynb
-   ```
-2. Click **Runtime ▸ Run all**. The notebook will
-
-   * install `ipywidgets` (first run only),
-   * write each Python module via `%%writefile`,
-   * import `mosfet_gui` → launches the slider panel.
-3. **Play with the sliders**
+## 2 Run in Google Colab 
+1. **Change the value with the sliders**
 
    * **Gate bias Vg** – φ(x) bends, inversion appears.
    * **Doping N<sub>A</sub>, N<sub>D</sub>** – mobility drops in heavily doped regions; G–R shifts.
    * **Temperature** – SRH flips sign as n<sub>i</sub> rises.
    * **Length L** – shows classic short‑channel electrostatics.
 
-If Colab prompts *“Restart runtime after pip install”* simply accept, then select **Run all** again.
-
-Enjoy exploring MOSFET physics!  Open an issue if you hit a snag or have ideas.
