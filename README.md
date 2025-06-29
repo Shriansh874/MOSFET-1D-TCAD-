@@ -81,8 +81,6 @@ G_{\text{II}} = \alpha(E) \frac{|J_n| + |J_p|}{q}
 
 The GUI plots the magnitude `|G_II − R_SRH − R_Auger|` on a log axis, revealing prospective avalanche spots.
 
-> **Quantum stub** – `quantum.py` is a placeholder for Schrödinger–Poisson charge.  Replace it and feed the extra charge into Poisson if you need sub‑10 nm accuracy.
-
 ---
 
 ## 2 Run in Google Colab 
